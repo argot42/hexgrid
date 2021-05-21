@@ -111,7 +111,7 @@ function orientation:New(o)
     return o
 end
 
-function HexLib:Orientation(f0, f1, f2, f3, b0, b1, b2, b3, startAngle)
+function grid:Orientation(f0, f1, f2, f3, b0, b1, b2, b3, startAngle)
     local o = {
         f0 = f0,
         f1 = f1,
@@ -137,8 +137,8 @@ function orientation:Print()
     print(self:Str())
 end
 
-local layoutPointy = HexLib:Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5)
-local layoutFlat = HexLib:Orientation(3.0 / 2.0, 0.0, math.sqrt(3.0) / 2.0, math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, math.sqrt(3.0) / 3.0, 0.0)
+local layoutPointy = grid:Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5)
+local layoutFlat = grid:Orientation(3.0 / 2.0, 0.0, math.sqrt(3.0) / 2.0, math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, math.sqrt(3.0) / 3.0, 0.0)
 
 local layout = {}
 
@@ -149,7 +149,7 @@ function layout:New(o)
     return o
 end
 
-function HexLib:Layout(orientation, size, origin)
+function grid:Layout(orientation, size, origin)
     assert(size ~= nil or size.x ~= nil or size.y ~= nil, "size should be a point {x=0, y=0}")
     assert(origin ~= nil or origin.x ~= nil or origin.y ~= nil, "origin should be a point {x=0, y=0}")
      
@@ -199,7 +199,7 @@ function layout:Hex(p)
     }
     local q = o.b0 * pt.x + o.b1 * pt.y
     local r = o.b2 * pt.x + o.b3 * pt.y
-    return HexLib:Hex(q, r, -q - r)
+    return grid:Hex(q, r, -q - r)
 end
 
 return grid
