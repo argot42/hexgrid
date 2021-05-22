@@ -13,7 +13,7 @@ function hex:New(o)
 end
 
 function grid:Hex(x, y, z)
-    assert(not (math.floor (0.5 + x + y + z) ~= 0), "q + r + s must be 0")
+    assert(not (math.floor (0.5 + x + y + z) ~= 0), "x + y + z must be 0")
 
     local h = {
         x = x,
@@ -80,22 +80,22 @@ end
 
 -- round
 function hex:Round()
-    local q = math.floor(self.q)
-    local r = math.floor(self.r)
-    local s = math.floor(self.s)
-    local qdiff = math.abs(q - self.q)
-    local rdiff = math.abs(r - self.r)
-    local sdiff = math.abs(s - self.s)
+    local x = math.floor(self.x)
+    local y = math.floor(self.y)
+    local z = math.floor(self.z)
+    local xdiff = math.abs(x - self.x)
+    local ydiff = math.abs(y - self.y)
+    local zdiff = math.abs(z - self.z)
 
-    if (qdiff > rdiff and qdiff > sdiff) then
-        q = -r - s
+    if (xdiff > ydiff and xdiff > sdiff) then
+        x = -y - z
     elseif (rdiff > sdiff) then
-        r = -q - s
+        y = -x - z
     else
-        s = -q - r
+        z = -x - y
     end
 
-    return grid:Hex(q, r, s)
+    return grid:Hex(x, y, z)
 end
 
 --
@@ -176,11 +176,10 @@ end
 --
 -- Hex to screen
 --
-
 function hex:Pix(layout)
     local o = layout.orientation
-    local x = (o.f0 * self.q + o.f1 * self.r) * layout.size.x
-    local y = (o.f2 * self.q + o.f3 * self.r) * layout.size.y
+    local x = (o.f0 * self.x + o.f1 * self.y) * layout.size.x
+    local y = (o.f2 * self.x + o.f3 * self.y) * layout.size.y
     return {
         x = x + layout.origin.x,
         y = y + layout.origin.y,
@@ -197,9 +196,9 @@ function layout:Hex(p)
         x = (p.x - self.origin.x) / self.size.x,
         y = (p.y - self.origin.y) / self.size.y,
     }
-    local q = o.b0 * pt.x + o.b1 * pt.y
-    local r = o.b2 * pt.x + o.b3 * pt.y
-    return grid:Hex(q, r, -q - r)
+    local x = o.b0 * pt.x + o.b1 * pt.y
+    local y = o.b2 * pt.x + o.b3 * pt.y
+    return grid:Hex(x, y, -x - y)
 end
 
 return grid
