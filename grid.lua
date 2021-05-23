@@ -12,20 +12,20 @@ function hex:New(o)
     return o
 end
 
-function grid:Hex(x, y, z)
-    assert(not (math.floor (0.5 + x + y + z) ~= 0), "x + y + z must be 0")
+function grid:Hex(q, r, s)
+    assert(not (math.floor (0.5 + q + r + s) ~= 0), "q + r + s must be 0")
 
     local h = {
-        x = x,
-        y = y,
-        z = z,
+        q = q,
+        r = r,
+        s = s,
     }
 
     return hex:New(h)
 end
 
 function hex:Str()
-    return "x = " .. self.x .. ", y = " .. self.y .. ", z = " .. self.z
+    return "q = " .. self.q .. ", r = " .. self.r .. ", s = " .. self.s
 end
 
 function hex:Print()
@@ -33,7 +33,7 @@ function hex:Print()
 end
 
 function hex:Eq(other)
-    return self.x == other.x and self.y == other.y and self.z == other.z
+    return self.q == other.q and self.r == other.r and self.s == other.s
 end
 
 function hex:Ne(other)
@@ -42,20 +42,20 @@ end
 
 -- arithmetic
 function hex:Add(other)
-    return grid:Hex(self.x + other.x, self.y + other.y, self.z + other.z)
+    return grid:Hex(self.q + other.q, self.r + other.r, self.s + other.s)
 end
 
 function hex:Sub(other)
-    return grid:Hex(self.x - other.x, self.y - other.y, self.z - other.z)
+    return grid:Hex(self.q - other.q, self.r - other.r, self.s - other.s)
 end
 
 function hex:Mul(other)
-    return grid:Hex(self.x * other.x, self.y * other.y, self.z * other.z)
+    return grid:Hex(self.q * other.q, self.r * other.r, self.s * other.s)
 end
 
 -- distance
 function hex:Len()
-    return (math.abs(self.x) + math.abs(self.y) + math.abs(self.z)) / 2
+    return (math.abs(self.q) + math.abs(self.r) + math.abs(self.s)) / 2
 end
 
 function hex:Dis(other)
@@ -80,12 +80,12 @@ end
 
 -- round
 function hex:Round()
-    local x = math.floor(self.x)
-    local y = math.floor(self.y)
-    local z = math.floor(self.z)
-    local xdiff = math.abs(x - self.x)
-    local ydiff = math.abs(y - self.y)
-    local zdiff = math.abs(z - self.z)
+    local x = math.floor(self.q)
+    local y = math.floor(self.r)
+    local z = math.floor(self.s)
+    local xdiff = math.abs(x - self.q)
+    local ydiff = math.abs(y - self.r)
+    local zdiff = math.abs(z - self.s)
 
     if (xdiff > ydiff and xdiff > sdiff) then
         x = -y - z
@@ -178,8 +178,8 @@ end
 --
 function hex:Pix(layout)
     local o = layout.orientation
-    local x = (o.f0 * self.x + o.f1 * self.y) * layout.size.x
-    local y = (o.f2 * self.x + o.f3 * self.y) * layout.size.y
+    local x = (o.f0 * self.q + o.f1 * self.r) * layout.size.x
+    local y = (o.f2 * self.q + o.f3 * self.r) * layout.size.y
     return {
         x = x + layout.origin.x,
         y = y + layout.origin.y,
@@ -194,11 +194,33 @@ function layout:Hex(p)
     local o = self.orientation
     local pt = {
         x = (p.x - self.origin.x) / self.size.x,
-        y = (p.y - self.origin.y) / self.size.y,
+        y = (p.y - self.origin.r) / self.size.y,
     }
     local x = o.b0 * pt.x + o.b1 * pt.y
     local y = o.b2 * pt.x + o.b3 * pt.y
     return grid:Hex(x, y, -x - y)
+end
+
+--
+-- grid creation
+--
+
+function grid.Grid(hexrad, gridrad, start)
+    assert(start ~= nil or start.x ~= nil or start.y ~= nil, "start should be a point {x,y}")
+    
+    local hexgrid = {}
+    local size = (gridrad * 2) + 1
+
+    hexgrid.layout = grid:Layout(grid.layoutFlat, start, {x=size, y=size})
+
+    hexgrid.matrix = {}
+    for i=1,size do
+        hexgrid.matrix[i] = {}
+    end
+
+
+
+    return hexgrid
 end
 
 return grid
