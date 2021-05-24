@@ -205,22 +205,56 @@ end
 -- grid creation
 --
 
-function grid.Grid(hexrad, gridrad, start)
+function grid.Grid(hexrad, size, start)
+    assert(hexrad > 0, "hexradius > 0")
+    assert(size > 0, "size > 0")
     assert(start ~= nil or start.x ~= nil or start.y ~= nil, "start should be a point {x,y}")
     
     local hexgrid = {}
-    local size = (gridrad * 2) + 1
+    local diameter = (size * 2) + 1
 
     hexgrid.layout = grid:Layout(grid.layoutFlat, start, {x=size, y=size})
 
-    hexgrid.matrix = {}
-    for i=1,size do
-        hexgrid.matrix[i] = {}
+    --hexgrid.matrix = {}
+    --for i=1,size do
+    --    hexgrid.matrix[i] = {}
+
+    --    if (i <= size) then
+    --         
+    --    end
+    --end
+
+    -- q = x
+    -- r = y
+    -- s = z
+    hexgrid.grid = {}
+    local i = 1
+    for s=-size,size do
+        hexgrid.grid[i] = {}
+
+        if s <= 0 then
+            for q=(-i+1),size do
+                table.insert(hexgrid.grid[i], grid:Hex(q, -(q+s), s))
+            end
+        else
+            for q=-size,size - (i % (size + 1)) do
+                table.insert(hexgrid.grid[i], grid:Hex(q, -(q+s), s))
+            end
+        end
+
+        i = i + 1
     end
-
-
 
     return hexgrid
 end
 
+function printGrid(g)
+    for i,row in ipairs(g) do
+        print("row -> " .. i)
+
+        for j,h in ipairs(row) do
+            h:Print()
+        end
+    end
+end
 return grid
