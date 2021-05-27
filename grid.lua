@@ -211,18 +211,9 @@ function grid.Grid(hexrad, size, start)
     assert(start ~= nil or start.x ~= nil or start.y ~= nil, "start should be a point {x,y}")
     
     local hexgrid = {}
-    local diameter = (size * 2) + 1
 
+    hexgrid.rad = hexrad
     hexgrid.layout = grid:Layout(grid.layoutFlat, start, {x=size, y=size})
-
-    --hexgrid.matrix = {}
-    --for i=1,size do
-    --    hexgrid.matrix[i] = {}
-
-    --    if (i <= size) then
-    --         
-    --    end
-    --end
 
     -- q = x
     -- r = y
@@ -243,6 +234,15 @@ function grid.Grid(hexrad, size, start)
         end
 
         i = i + 1
+    end
+
+    hexgrid.vertices = {}
+    for i=1,6 do
+        local dir = math.pi/3 * (i+0.5)
+
+        hexgrid.vertices[i] = {}
+        hexgrid.vertices[i].x = hexrad * math.cos(dir)
+        hexgrid.vertices[i].y = hexrad * math.sin(dir)
     end
 
     return hexgrid
